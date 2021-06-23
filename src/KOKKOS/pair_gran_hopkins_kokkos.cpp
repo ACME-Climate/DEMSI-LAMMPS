@@ -52,9 +52,7 @@ PairGranHopkinsKokkos<DeviceType>::PairGranHopkinsKokkos(LAMMPS *lmp) : PairGran
   execution_space = ExecutionSpaceFromDevice<DeviceType>::space;
   datamask_read = X_MASK | V_MASK | OMEGA_MASK | F_MASK | TORQUE_MASK | TYPE_MASK | MASK_MASK | 
                   ENERGY_MASK | VIRIAL_MASK | RMASS_MASK | RADIUS_MASK | THICKNESS_MASK;
-  datamask_modify = F_MASK | TORQUE_MASK | ENERGY_MASK | VIRIAL_MASK;
-
-  std::cout << "In pair gran hopkins kokkos... \n";
+  datamask_modify = F_MASK | TORQUE_MASK | ENERGY_MASK | VIRIAL_MASK | THICKNESS_MASK;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -66,8 +64,8 @@ PairGranHopkinsKokkos<DeviceType>::~PairGranHopkinsKokkos()
   if (allocated) {
     memoryKK->destroy_kokkos(k_eatom,eatom);
     memoryKK->destroy_kokkos(k_vatom,vatom);
-    eatom = NULL;
-    vatom = NULL;
+    eatom = nullptr;
+    vatom = nullptr;
   }
 }
 
@@ -75,7 +73,7 @@ PairGranHopkinsKokkos<DeviceType>::~PairGranHopkinsKokkos()
 template<class DeviceType>
 void PairGranHopkinsKokkos<DeviceType>::init_style()
 {
-  if (history && fix_history == NULL) {
+  if (history && fix_history == nullptr) {
     char dnumstr[16];
     sprintf(dnumstr,"%d",12);
     char **fixarg = new char*[4];
@@ -331,14 +329,12 @@ void PairGranHopkinsKokkos<DeviceType>::operator()(TagPairGranHopkinsCompute<NEI
 
     F_FLOAT chi1 = d_firsthistory(i,size_history*jj+8);
     F_FLOAT chi2 = d_firsthistory(i,size_history*jj+9);
-    //printf("%f %f \n", chi1, chi2);
     if (chi1 >= chi2){ // Un-bonded, chi1 >= chi2
       compute_nonbonded_kokkos<NEIGHFLAG,NEWTON_PAIR,HISTORYUPDATE>(i,j,jj,fx,fy,torque_i,torque_j);
     }
     else { //Bonded
       compute_bonded_kokkos<NEIGHFLAG,NEWTON_PAIR,HISTORYUPDATE>(i,j,jj,fx,fy,torque_i,torque_j);
     }
-    //printf("%d %d %f %f %f %f\n", i, j, fx, fy, torque_i, torque_j);
 
     fx_sum += fx;
     fy_sum += fy;
@@ -382,9 +378,9 @@ void PairGranHopkinsKokkos<DeviceType>::elastic_stiffness(F_FLOAT meanIceThickne
 
   F_FLOAT stiffness1 = (Emod * meanIceThickness1) / (2.0 * radius1);
   F_FLOAT stiffness2 = (Emod * meanIceThickness2) / (2.0 * radius2);
-  elasticStiffness = std::min(stiffness1,stiffness2);
+  elasticStiffness = MIN(stiffness1,stiffness2);
 
-  elasticDamping = std::sqrt(2.0 * elasticStiffness * bondLength * std::min(mass1,mass2)) / bondLength;
+  elasticDamping = std::sqrt(2.0 * elasticStiffness * bondLength * MIN(mass1,mass2)) / bondLength;
   elasticDamping *= damp_normal;
 
 }
@@ -414,7 +410,7 @@ void PairGranHopkinsKokkos<DeviceType>::plastic_parameters(F_FLOAT particleRadiu
 
   F_FLOAT resolutionScaling = 10000.0 / (2.0*particleRadius);
 
-  F_FLOAT iceConcentration = std::min(iceConcentration1, iceConcentration2);
+  F_FLOAT iceConcentration = MIN(iceConcentration1, iceConcentration2);
   F_FLOAT iceConcFactor = std::exp(-exponentialIceStrengthCoeff * (1.0 - iceConcentration));
   plasticFriction           = plasticFrictionCoeff  * ridgingThickness * iceConcFactor;
   plasticHardeningStiffness = plasticHardeningCoeff * ridgingThickness*ridgingThickness * resolutionScaling;
@@ -641,6 +637,7 @@ void PairGranHopkinsKokkos<DeviceType>::hopkins_ridging_model(bool modifyOtherEl
 		  ridgeSlipUsed,
 		  changeEffectiveElementArea1,
 		  changeEffectiveElementArea2);
+
 
 }
 

@@ -15,6 +15,8 @@
 
 #include "atom.h"
 #include "atom_vec.h"
+#include "atom_kokkos.h"
+#include "atom_masks.h"
 #include "comm.h"
 #include "domain.h"
 #include "error.h"
@@ -36,6 +38,7 @@ DeleteBonds::DeleteBonds(LAMMPS *lmp) : Command(lmp) {}
 
 void DeleteBonds::command(int narg, char **arg)
 {
+
   if (domain->box_exist == 0)
     error->all(FLERR,"Delete_bonds command before simulation box is defined");
   if (atom->natoms == 0)
@@ -120,6 +123,11 @@ void DeleteBonds::command(int narg, char **arg)
   // enforce PBC before in case atoms are outside box
 
   if (domain->triclinic) domain->x2lamda(atom->nlocal);
+  if (lmp->kokkos){
+    atomKK = (AtomKokkos *) atom;
+    atomKK->sync(Host,ALL_MASK);
+    atomKK->modified(Host,ALL_MASK);
+  }
   domain->pbc();
   domain->reset_box();
   comm->setup();

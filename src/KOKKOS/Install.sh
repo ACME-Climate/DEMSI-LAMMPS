@@ -106,6 +106,8 @@ action domain_kokkos.h
 action fftdata_kokkos.h fft3d.h
 action fft3d_kokkos.cpp fft3d.cpp
 action fft3d_kokkos.h fft3d.h
+action fix_addforce_kokkos.cpp
+action fix_addforce_kokkos.h
 action fix_deform_kokkos.cpp
 action fix_deform_kokkos.h
 action fix_enforce2d_kokkos.cpp
@@ -132,6 +134,8 @@ action fix_nve_kokkos.cpp
 action fix_nve_kokkos.h
 action fix_nve_sphere_kokkos.cpp
 action fix_nve_sphere_kokkos.h
+action fix_nve_sphere_demsi_kokkos.cpp
+action fix_nve_sphere_demsi_kokkos.h
 action fix_nvt_kokkos.cpp
 action fix_nvt_kokkos.h
 action fix_property_atom_kokkos.cpp
@@ -231,6 +235,10 @@ action pair_exp6_rx_kokkos.cpp pair_exp6_rx.cpp
 action pair_exp6_rx_kokkos.h pair_exp6_rx.h
 action pair_gran_hooke_history_kokkos.h pair_gran_hooke_history.h
 action pair_gran_hooke_history_kokkos.cpp pair_gran_hooke_history.cpp
+action pair_gran_hooke_thickness_kokkos.h pair_gran_hooke_thickness.h
+action pair_gran_hooke_thickness_kokkos.cpp pair_gran_hooke_thickness.cpp
+action pair_gran_hopkins_kokkos.h pair_gran_hopkins.h
+action pair_gran_hopkins_kokkos.cpp pair_gran_hopkins.cpp
 action pair_hybrid_kokkos.cpp
 action pair_hybrid_kokkos.h
 action pair_hybrid_overlay_kokkos.cpp
